@@ -1,0 +1,66 @@
+name: PlayerPortals
+main: net.andrewcr.minecraft.plugin.PlayerPortals.Plugin
+version: 1.0
+authors: [ andrewcr ]
+
+commands:
+  portal:
+    description: Commands to manage portals
+    usage: |
+      Use /help portal [subcommand] for more information
+      /portal list - List portals
+      /portal info - Get information about a portal
+      /portal set - Set properties of a portal
+      /portal import - Import portals from another plugin
+      /ptp - Teleport to a portals
+  portal list:
+    description: List portals
+    usage: |
+      /portal list - List all portals
+      /portal list [world] - List all portals in a world
+  portal info:
+    description: Get information about a portal
+    usage: |
+      /portal info [portal name] - Get information about the specified portal
+  portal set:
+    description: Sets properties of a portal
+    usage: |
+      /portal set [portal name] owner [player name | (none)] - Sets the owner of a portal
+      /portal set [portal name] description [text] - Sets the description of a portal
+      /portal set [portal name] exitHeading clear - Clears the exit vector of a portal
+      /portal set [portal name] exitHeading [yaw] [pitch] [velocity multiplier] ["abs"] - Sets the exit vector of a portal
+  portal import:
+    description: Import portals from another plugin
+    usage: |
+      /portal import myworlds - Import portals from MyWorlds plugin
+  ptp:
+    description: Teleport to a portal
+    usage: |
+      /ptp [valid destination] - Teleport to the listed destination
+      /ptp [player] [valid destination] - Teleport a player to the listed destination
+
+permissions:
+  playerportal.create:
+    description: Determines whether or not the player can create portals
+    default: true
+  playerportal.modifyOwn:
+    description: Determines whether or not the player can modify their own portals
+    default: true
+  playerportal.modifyOther:
+    description: Determines whether or not the player can modify portals owned by other players
+    default: op
+  playerportal.list:
+    description: Determines whether or not the player can list portals
+    default: true
+  playerportal.info:
+    description: Determines whether or not the player can get information about a portal
+    default: true
+  playerportal.import:
+    description: Determines whether or not the player can import portals from another plugin
+    default: op
+  playerportal.teleportCommand:
+    description: Determines whether or not the player can use the 'ptp' command
+    default: op
+  playerportal.set:
+    description: Determines whether or not the player can modify portal properties
+    default: op
