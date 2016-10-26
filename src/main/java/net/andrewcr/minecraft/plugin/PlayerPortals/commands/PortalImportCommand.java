@@ -7,7 +7,7 @@ import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalStore;
 
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalMessage;
 import net.andrewcr.minecraft.plugin.PlayerPortals.managers.SignManager;
-import net.andrewcr.minecraft.plugin.PlayerPortals.util.LocationUtil;
+import net.andrewcr.minecraft.plugin.BasePluginLib.util.LocationUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;

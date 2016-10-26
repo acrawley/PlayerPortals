@@ -2,7 +2,7 @@ package net.andrewcr.minecraft.plugin.PlayerPortals.model.portals;
 
 import lombok.Getter;
 import lombok.Synchronized;
-import net.andrewcr.minecraft.plugin.PlayerPortals.util.StringUtil;
+import net.andrewcr.minecraft.plugin.BasePluginLib.util.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;

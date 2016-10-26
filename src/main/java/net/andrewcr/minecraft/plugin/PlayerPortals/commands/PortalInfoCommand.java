@@ -1,14 +1,12 @@
 package net.andrewcr.minecraft.plugin.PlayerPortals.commands;
 
 import net.andrewcr.minecraft.plugin.PlayerPortals.Constants;
-import net.andrewcr.minecraft.plugin.PlayerPortals.Plugin;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.Portal;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalStore;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalMessage;
-import net.andrewcr.minecraft.plugin.PlayerPortals.util.StringUtil;
+import net.andrewcr.minecraft.plugin.BasePluginLib.util.StringUtil;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 
 public class PortalInfoCommand extends CommandBase {

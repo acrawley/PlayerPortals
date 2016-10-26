@@ -2,8 +2,7 @@ package net.andrewcr.minecraft.plugin.PlayerPortals.managers;
 
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.Portal;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalStore;
-import net.andrewcr.minecraft.plugin.PlayerPortals.util.LocationUtil;
-import net.andrewcr.minecraft.plugin.PlayerPortals.util.StringUtil;
+import net.andrewcr.minecraft.plugin.BasePluginLib.util.StringUtil;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;

@@ -2,7 +2,7 @@ package net.andrewcr.minecraft.plugin.PlayerPortals.model.portals;
 
 import net.andrewcr.minecraft.plugin.PlayerPortals.Plugin;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.ConfigurationFileBase;
-import net.andrewcr.minecraft.plugin.PlayerPortals.util.StringUtil;
+import net.andrewcr.minecraft.plugin.BasePluginLib.util.StringUtil;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;

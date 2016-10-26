@@ -2,6 +2,7 @@ name: PlayerPortals
 main: net.andrewcr.minecraft.plugin.PlayerPortals.Plugin
 version: 1.0
 authors: [ andrewcr ]
+depend: [ BasePluginLib ]
 
 commands:
   portal:

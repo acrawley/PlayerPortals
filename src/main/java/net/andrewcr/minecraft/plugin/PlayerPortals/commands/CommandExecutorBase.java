@@ -1,7 +1,7 @@
 package net.andrewcr.minecraft.plugin.PlayerPortals.commands;
 
 import net.andrewcr.minecraft.plugin.PlayerPortals.Plugin;
-import net.andrewcr.minecraft.plugin.PlayerPortals.util.ArrayUtil;
+import net.andrewcr.minecraft.plugin.BasePluginLib.util.ArrayUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;

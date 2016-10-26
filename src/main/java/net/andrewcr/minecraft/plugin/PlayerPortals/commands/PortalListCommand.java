@@ -3,7 +3,7 @@ package net.andrewcr.minecraft.plugin.PlayerPortals.commands;
 import net.andrewcr.minecraft.plugin.PlayerPortals.Constants;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.Portal;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalStore;
-import net.andrewcr.minecraft.plugin.PlayerPortals.util.StringUtil;
+import net.andrewcr.minecraft.plugin.BasePluginLib.util.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
