@@ -1,7 +1,7 @@
 package net.andrewcr.minecraft.plugin.PlayerPortals.model.portals;
 
 import net.andrewcr.minecraft.plugin.PlayerPortals.Plugin;
-import net.andrewcr.minecraft.plugin.PlayerPortals.model.ConfigurationFileBase;
+import net.andrewcr.minecraft.plugin.BasePluginLib.config.ConfigurationFileBase;
 import net.andrewcr.minecraft.plugin.BasePluginLib.util.StringUtil;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -24,6 +24,7 @@ public class PortalStore extends ConfigurationFileBase {
     //region Constructor
 
     public PortalStore() {
+        super(Plugin.getInstance());
         this.portals = new ArrayList<>();
 
         ConfigurationSerialization.registerClass(Portal.class);

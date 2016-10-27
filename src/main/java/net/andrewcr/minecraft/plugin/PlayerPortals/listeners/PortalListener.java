@@ -1,5 +1,9 @@
-package net.andrewcr.minecraft.plugin.PlayerPortals.managers;
+package net.andrewcr.minecraft.plugin.PlayerPortals.listeners;
 
+import net.andrewcr.minecraft.plugin.PlayerPortals.events.PlayerPortalsEntityPortalEvent;
+import net.andrewcr.minecraft.plugin.PlayerPortals.events.PlayerPortalsEntityPortalExitEvent;
+import net.andrewcr.minecraft.plugin.PlayerPortals.events.PlayerPortalsPlayerPortalEvent;
+import net.andrewcr.minecraft.plugin.PlayerPortals.model.config.ConfigStore;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.Portal;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalStore;
 import net.andrewcr.minecraft.plugin.BasePluginLib.util.StringUtil;
@@ -15,7 +19,7 @@ import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
 
-public class PortalManager implements Listener {
+public class PortalListener implements Listener {
     //region Private Fields
 
     private PortalUsageTracker tracker;
@@ -24,36 +28,13 @@ public class PortalManager implements Listener {
 
     //region Constructor
 
-    public PortalManager() {
+    public PortalListener() {
         this.tracker = new PortalUsageTracker();
     }
 
     //endregion
 
-    //region Custom Event Types
-
-    private class CustomEntityPortalEvent extends EntityPortalEvent {
-        public CustomEntityPortalEvent(Entity entity, Location from, Location to, TravelAgent pta) {
-            super(entity, from, to, pta);
-        }
-    }
-
-    private class CustomPlayerPortalEvent extends PlayerPortalEvent {
-        public CustomPlayerPortalEvent(Player player, Location from, Location to, TravelAgent pta, TeleportCause cause) {
-            super(player, from, to, pta, cause);
-        }
-    }
-
-    //endregion
-
     //region Event Listeners
-
-    @EventHandler
-    public void onEntityDamage(EntityDamageEvent event) {
-        if (event.getCause() == EntityDamageEvent.DamageCause.SUFFOCATION) {
-            event.getEntity().sendMessage("whoops");
-        }
-    }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent event) {
@@ -104,7 +85,7 @@ public class PortalManager implements Listener {
         }
 
         // Send portal event
-        if (this.sendPortalEvent(event.getEntity(), event.getEntity().getLocation(), destination.getLocation())) {
+        if (this.sendPortalEvent(enteredPortal, destination.getPortal(), event.getEntity(), event.getEntity().getLocation(), destination.getLocation())) {
             // Teleport was cancelled
             return;
         }
@@ -114,19 +95,26 @@ public class PortalManager implements Listener {
 
         // Conserve momentum
         Vector velocityBefore = event.getEntity().getVelocity().clone();
-        Vector velocityAfter = destination.getLocation().getDirection().multiply(velocityBefore.length());
-        if (destination.getPortal().getExitHeading() != null) {
-            if (destination.getPortal().getExitHeading().isAbsoluteVelocity()) {
-                // Set velocity to the value in the heading
-                velocityAfter = destination.getLocation().getDirection().multiply(destination.getPortal().getExitHeading().getVelocityMultiplier());
+        Vector velocityAfter;
+
+        if (ConfigStore.getInstance().isMomentumConserved()) {
+            velocityAfter = destination.getLocation().getDirection().multiply(velocityBefore.length());
+            if (destination.getPortal().getExitHeading() != null) {
+                if (destination.getPortal().getExitHeading().isAbsoluteVelocity()) {
+                    // Set velocity to the value in the heading
+                    velocityAfter = destination.getLocation().getDirection().multiply(destination.getPortal().getExitHeading().getVelocityMultiplier());
+                } else {
+                    // Apply the portal's velocity multiplier
+                    velocityAfter = velocityAfter.multiply(destination.getPortal().getExitHeading().getVelocityMultiplier());
+                }
             }
-            else {
-                // Apply the portal's velocity multiplier
-                velocityAfter = velocityAfter.multiply(destination.getPortal().getExitHeading().getVelocityMultiplier());
-            }
+        } else {
+            velocityAfter = new Vector();
         }
 
-        EntityPortalExitEvent exitEvent = new EntityPortalExitEvent(
+        PlayerPortalsEntityPortalExitEvent exitEvent = new PlayerPortalsEntityPortalExitEvent(
+            enteredPortal,
+            destination.getPortal(),
             event.getEntity(),
             event.getEntity().getLocation(),
             destination.getLocation(),
@@ -146,7 +134,7 @@ public class PortalManager implements Listener {
     @EventHandler
     // This event is fired when a player is teleported by a portal
     public void onPlayerPortal(PlayerPortalEvent event) {
-        if (event instanceof CustomPlayerPortalEvent) {
+        if (event instanceof PlayerPortalsPlayerPortalEvent) {
             // Ignore events generated by this plugin
             return;
         }
@@ -162,7 +150,7 @@ public class PortalManager implements Listener {
     @EventHandler
     // This event is fired when an entity other than a player is teleported by a portal
     public void onEntityPortal(EntityPortalEvent event) {
-        if (event instanceof CustomEntityPortalEvent) {
+        if (event instanceof PlayerPortalsEntityPortalEvent) {
             return;
         }
 
@@ -175,18 +163,18 @@ public class PortalManager implements Listener {
 
     //region Helpers
 
-    private boolean sendPortalEvent(Entity entity, Location from, Location to) {
+    private boolean sendPortalEvent(Portal originPortal, Portal destinationPortal, Entity entity, Location from, Location to) {
         // Send further portal events so other plugins can see
         if (entity instanceof Player) {
-            CustomPlayerPortalEvent teleportEvent = new CustomPlayerPortalEvent(
-                (Player) entity, from, to, null, PlayerTeleportEvent.TeleportCause.PLUGIN);
+            PlayerPortalsPlayerPortalEvent teleportEvent = new PlayerPortalsPlayerPortalEvent(
+                originPortal, destinationPortal, (Player) entity, from, to, null, PlayerTeleportEvent.TeleportCause.PLUGIN);
 
             Bukkit.getServer().getPluginManager().callEvent(teleportEvent);
 
             return teleportEvent.isCancelled();
         } else {
-            CustomEntityPortalEvent teleportEvent = new CustomEntityPortalEvent(
-                entity, from, to, null);
+            PlayerPortalsEntityPortalEvent teleportEvent = new PlayerPortalsEntityPortalEvent(
+                originPortal, destinationPortal, entity, from, to, null);
 
             Bukkit.getServer().getPluginManager().callEvent(teleportEvent);
 

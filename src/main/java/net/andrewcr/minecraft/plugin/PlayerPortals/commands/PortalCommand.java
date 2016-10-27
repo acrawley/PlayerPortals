@@ -1,5 +1,8 @@
 package net.andrewcr.minecraft.plugin.PlayerPortals.commands;
 
+import net.andrewcr.minecraft.plugin.BasePluginLib.command.CommandBase;
+import net.andrewcr.minecraft.plugin.BasePluginLib.command.CommandExecutorBase;
+
 public class PortalCommand extends CommandBase {
     @Override
     public CommandExecutorBase getExecutor() {

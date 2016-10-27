@@ -1,4 +1,4 @@
-package net.andrewcr.minecraft.plugin.PlayerPortals.managers;
+package net.andrewcr.minecraft.plugin.PlayerPortals.listeners;
 
 import lombok.Data;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.Portal;

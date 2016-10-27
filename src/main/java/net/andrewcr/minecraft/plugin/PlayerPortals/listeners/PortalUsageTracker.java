@@ -1,4 +1,4 @@
-package net.andrewcr.minecraft.plugin.PlayerPortals.managers;
+package net.andrewcr.minecraft.plugin.PlayerPortals.listeners;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;

@@ -1,4 +1,4 @@
-package net.andrewcr.minecraft.plugin.PlayerPortals.managers;
+package net.andrewcr.minecraft.plugin.PlayerPortals.listeners;
 
 import net.andrewcr.minecraft.plugin.PlayerPortals.Constants;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.Portal;
@@ -16,7 +16,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 
-public class SignManager implements Listener {
+public class SignListener implements Listener {
     //region Event Handlers
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -27,7 +27,7 @@ public class SignManager implements Listener {
 
         Player player = event.getPlayer();
         if (!player.hasPermission(Constants.CreatePortalPermission)) {
-            SignManager.setSignLineColor(event, 0, ChatColor.RED);
+            SignListener.setSignLineColor(event, 0, ChatColor.RED);
             player.sendMessage(ChatColor.RED + "You do not have permission to create portals!");
             return;
         }
@@ -45,11 +45,11 @@ public class SignManager implements Listener {
 
         PortalMessage message = portal.validatePortal();
         if (message == null) {
-            SignManager.setSignLineColor(event, 0, ChatColor.GREEN);
+            SignListener.setSignLineColor(event, 0, ChatColor.GREEN);
         } else {
             ChatColor color = (message.isError()) ? ChatColor.RED : ChatColor.YELLOW;
 
-            SignManager.setSignLineColor(event, 0, color);
+            SignListener.setSignLineColor(event, 0, color);
             player.sendMessage(color + message.getMessage());
 
             if (message.isError()) {
@@ -114,7 +114,7 @@ public class SignManager implements Listener {
         }
 
         // Update signs on portals that targeted the portal that changed
-        SignManager.updateSigns(PortalStore.getInstance().getPortalsByDestination(changedPortal.getName()));
+        SignListener.updateSigns(PortalStore.getInstance().getPortalsByDestination(changedPortal.getName()));
     }
 
     public static void updateSigns(Iterable<Portal> portals) {
@@ -135,7 +135,7 @@ public class SignManager implements Listener {
                 color = ChatColor.YELLOW;
             }
 
-            SignManager.setSignLineColor(portalSign, 0, color);
+            SignListener.setSignLineColor(portalSign, 0, color);
         }
     }
 

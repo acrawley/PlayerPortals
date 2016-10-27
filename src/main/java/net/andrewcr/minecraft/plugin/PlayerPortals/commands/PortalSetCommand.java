@@ -1,5 +1,7 @@
 package net.andrewcr.minecraft.plugin.PlayerPortals.commands;
 
+import net.andrewcr.minecraft.plugin.BasePluginLib.command.CommandBase;
+import net.andrewcr.minecraft.plugin.BasePluginLib.command.CommandExecutorBase;
 import net.andrewcr.minecraft.plugin.PlayerPortals.Constants;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalExitHeading;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.Portal;
