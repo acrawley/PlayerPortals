@@ -2,6 +2,7 @@ package net.andrewcr.minecraft.plugin.PlayerPortals;
 
 import lombok.Getter;
 import net.andrewcr.minecraft.plugin.BasePluginLib.plugin.PluginBase;
+import net.andrewcr.minecraft.plugin.BasePluginLib.util.Version;
 import net.andrewcr.minecraft.plugin.PlayerPortals.commands.*;
 import net.andrewcr.minecraft.plugin.PlayerPortals.listeners.PortalListener;
 import net.andrewcr.minecraft.plugin.PlayerPortals.listeners.SignListener;
@@ -22,9 +23,12 @@ public class Plugin extends PluginBase {
     //endregion
 
     @Override
-    public void onEnable() {
-        super.onEnable();
+    protected Version getRequiredBPLVersion() {
+        return new Version(1, 1);
+    }
 
+    @Override
+    public void onEnableCore() {
         // Reset state
         Plugin.instance = this;
 
@@ -49,9 +53,7 @@ public class Plugin extends PluginBase {
     }
 
     @Override
-    public void onDisable() {
-        super.onDisable();
-
+    public void onDisableCore() {
         // Save data
         this.portalStore.save();
 
