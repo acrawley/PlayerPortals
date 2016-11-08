@@ -2,10 +2,10 @@ package net.andrewcr.minecraft.plugin.PlayerPortals.commands;
 
 import net.andrewcr.minecraft.plugin.BasePluginLib.command.CommandBase;
 import net.andrewcr.minecraft.plugin.BasePluginLib.command.CommandExecutorBase;
+import net.andrewcr.minecraft.plugin.BasePluginLib.util.StringUtil;
 import net.andrewcr.minecraft.plugin.PlayerPortals.Constants;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.Portal;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalStore;
-import net.andrewcr.minecraft.plugin.BasePluginLib.util.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -20,12 +20,12 @@ public class PortalListCommand extends CommandBase {
     }
 
     private class PortalListCommandExecutor extends CommandExecutorBase {
-        public PortalListCommandExecutor() {
+        PortalListCommandExecutor() {
             super("portal list", Constants.ListPortalsPermission);
         }
 
         protected boolean invoke(String[] args) {
-            Iterable<Portal> portals = null;
+            Iterable<Portal> portals;
 
             if (args.length == 0) {
                 if (this.isConsole()) {
@@ -53,7 +53,7 @@ public class PortalListCommand extends CommandBase {
             if (portals != null) {
                 this.sendMessage(StreamSupport.stream(portals.spliterator(), false)
                     .filter(p -> !StringUtil.isNullOrEmpty(p.getName()))
-                    .map(p -> p.getName())
+                    .map(Portal::getName)
                     .collect(Collectors.joining(", ")));
             }
 

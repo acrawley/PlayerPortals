@@ -7,17 +7,17 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 class PortalUsageTracker {
+    private final Map<Entity, EntityPortalRecord> portalRecords;
+
     private class EntityPortalRecord {
-        Location lastPortalContact;
-        long lastTime;
+        private final long lastTime;
+        private Location lastPortalContact;
 
         public EntityPortalRecord(Location portalLocation) {
             this.lastPortalContact = portalLocation;
             this.lastTime = System.currentTimeMillis();
         }
     }
-
-    private Map<Entity, EntityPortalRecord> portalRecords;
 
     public PortalUsageTracker() {
         // Use a WeakHashMap to ensure that our keys don't keep entities from being GC'ed

@@ -1,23 +1,25 @@
 package net.andrewcr.minecraft.plugin.PlayerPortals.model.portals;
 
-import net.andrewcr.minecraft.plugin.PlayerPortals.Plugin;
 import net.andrewcr.minecraft.plugin.BasePluginLib.config.ConfigurationFileBase;
 import net.andrewcr.minecraft.plugin.BasePluginLib.util.StringUtil;
+import net.andrewcr.minecraft.plugin.PlayerPortals.Plugin;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class PortalStore extends ConfigurationFileBase {
     //region Private Fields
 
-    private List<Portal> portals;
+    private static final String CONFIGURATION_VERSION_KEY = "ConfigurationVersion";
+    private static final String PORTALS_KEY = "Portals";
+
+    private Map<String, Portal> portals;
+
 
     //endregion
 
@@ -25,9 +27,7 @@ public class PortalStore extends ConfigurationFileBase {
 
     public PortalStore() {
         super(Plugin.getInstance());
-        this.portals = new ArrayList<>();
-
-        ConfigurationSerialization.registerClass(Portal.class);
+        this.portals = new LinkedHashMap<>();
     }
 
     //endregion
@@ -42,43 +42,44 @@ public class PortalStore extends ConfigurationFileBase {
 
     //region Serialization
 
-    public void loadCore() {
-        File portalFile = new File(Plugin.getInstance().getDataFolder(), "portals.yml");
-        if (portalFile.exists()) {
-            YamlConfiguration config = YamlConfiguration.loadConfiguration(portalFile);
-            String version = config.getString("ConfigurationVersion");
 
-            switch (version) {
-                case "1.0":
-                    this.loadV1_0Config(config);
-                    return;
+    @Override
+    protected String getFileName() {
+        return "portals.yml";
+    }
 
-                default:
-                    Plugin.getInstance().getLogger().severe("Unknown portal configuration version '" + version + "'!");
-            }
+    public void loadCore(YamlConfiguration configuration) {
+        String version = configuration.getString(CONFIGURATION_VERSION_KEY);
+        switch (version) {
+            case "1.0":
+                this.loadV1_0Config(configuration);
+                return;
+
+            default:
+                Plugin.getInstance().getLogger().severe("Unknown portal configuration version '" + version + "'!");
         }
     }
 
     private void loadV1_0Config(YamlConfiguration config) {
-        List<Portal> configPortals = (List<Portal>) config.getList("Portals");
-        if (configPortals != null) {
-            this.portals = configPortals;
+        ConfigurationSection portals = config.getConfigurationSection(PORTALS_KEY);
+        if (portals != null) {
+            for (String portalName : portals.getKeys(false)) {
+                this.addPortal(Portal.loadFrom(portals.getConfigurationSection(portalName)));
+            }
         }
+
+        Plugin.getInstance().getLogger().info("Loaded " + this.portals.size() + " portal(s)!");
     }
 
-    public void saveCore() {
-        File portalFile = new File(Plugin.getInstance().getDataFolder(), "portals.yml");
+    public void saveCore(YamlConfiguration configuration) {
+        configuration.set(CONFIGURATION_VERSION_KEY, "1.0");
 
-        YamlConfiguration config = new YamlConfiguration();
-        config.set("ConfigurationVersion", "1.0");
-
-        config.set("Portals", this.portals);
-
-        try {
-            config.save(portalFile);
-        } catch (IOException e) {
-            Plugin.getInstance().getLogger().severe("Failed to save portal configuration: " + e.toString());
+        ConfigurationSection portals = configuration.createSection(PORTALS_KEY);
+        for (Portal portal : this.portals.values()) {
+            portal.save(portals);
         }
+
+        Plugin.getInstance().getLogger().info("Saved " + this.portals.size() + " portal(s)!");
     }
 
     //endregion
@@ -86,23 +87,18 @@ public class PortalStore extends ConfigurationFileBase {
     //region Public API
 
     public Portal getPortalByName(String name) {
-        for (Portal portal : this.portals) {
-            if (portal.getName() != null && portal.getName().equals(name)) {
-                return portal;
-            }
+        if (this.portals.containsKey(name)) {
+            return this.portals.get(name);
         }
 
         return null;
     }
 
     public Portal getPortalByLocation(Location location) {
-        for (Portal portal : this.portals) {
-            if (portal.getLocation().equals(location)) {
-                return portal;
-            }
-        }
-
-        return null;
+        return this.portals.values().stream()
+            .filter(p -> p.getLocation().equals(location))
+            .findAny()
+            .orElse(null);
     }
 
     public Portal getClosestPortal(Location location) {
@@ -122,28 +118,28 @@ public class PortalStore extends ConfigurationFileBase {
     }
 
     public Iterable<Portal> getPortalsByDestination(String destination) {
-        return this.portals.stream()
+        return this.portals.values().stream()
             .filter(portal -> StringUtil.equals(portal.getDestination(), destination))
             .collect(Collectors.toList());
     }
 
     public Iterable<Portal> getPortalsInWorld(World world) {
-        return this.portals.stream()
+        return this.portals.values().stream()
             .filter(portal -> portal.getLocation().getWorld() == world)
             .collect(Collectors.toList());
     }
 
     public Iterable<Portal> getPortals() {
-        return this.portals;
+        return this.portals.values();
     }
 
     public void addPortal(Portal portal) {
-        this.portals.add(portal);
+        this.portals.put(portal.getName(), portal);
         this.notifyChanged();
     }
 
     public void removePortal(Portal portal) {
-        this.portals.remove(portal);
+        this.portals.remove(portal.getName());
         this.notifyChanged();
     }
 

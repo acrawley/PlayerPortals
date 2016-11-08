@@ -3,6 +3,7 @@ main: net.andrewcr.minecraft.plugin.PlayerPortals.Plugin
 version: 1.0
 authors: [ andrewcr ]
 depend: [ BasePluginLib ]
+softdepend: [ Multiverse-Core ]
 
 commands:
   portal:
@@ -29,7 +30,8 @@ commands:
       /portal set [portal name] owner [player name | (none)] - Sets the owner of a portal
       /portal set [portal name] description [text] - Sets the description of a portal
       /portal set [portal name] exitHeading clear - Clears the exit vector of a portal
-      /portal set [portal name] exitHeading [yaw] [pitch] [velocity multiplier] ["abs"] - Sets the exit vector of a portal
+      /portal set [portal name] exitHeading [yaw] [pitch] x[velocity multiplier] - Sets the exit vector of a portal
+      /portal set [portal name] exitHeading [yaw] [pitch] [velocity] - Sets the exit vector of a portal
   portal import:
     description: Import portals from another plugin
     usage: |

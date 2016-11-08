@@ -1,16 +1,16 @@
 package net.andrewcr.minecraft.plugin.PlayerPortals.listeners;
 
 import lombok.Data;
-import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.Portal;
-import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalStore;
 import net.andrewcr.minecraft.plugin.BasePluginLib.util.LocationUtil;
 import net.andrewcr.minecraft.plugin.BasePluginLib.util.StringUtil;
+import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.Portal;
+import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalStore;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-public @Data
-class PortalDestination {
+@Data
+public class PortalDestination {
     private final Location location;
     private final String description;
     private final Portal portal;

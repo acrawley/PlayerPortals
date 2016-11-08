@@ -2,12 +2,12 @@ package net.andrewcr.minecraft.plugin.PlayerPortals.commands;
 
 import net.andrewcr.minecraft.plugin.BasePluginLib.command.CommandBase;
 import net.andrewcr.minecraft.plugin.BasePluginLib.command.CommandExecutorBase;
-import net.andrewcr.minecraft.plugin.PlayerPortals.Constants;
-import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalExitHeading;
-import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.Portal;
-import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalStore;
 import net.andrewcr.minecraft.plugin.BasePluginLib.util.ArrayUtil;
 import net.andrewcr.minecraft.plugin.BasePluginLib.util.StringUtil;
+import net.andrewcr.minecraft.plugin.PlayerPortals.Constants;
+import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.Portal;
+import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalExitHeading;
+import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalStore;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -21,7 +21,7 @@ public class PortalSetCommand extends CommandBase {
     }
 
     private class PortalSetCommandExecutor extends CommandExecutorBase {
-        public PortalSetCommandExecutor() {
+        PortalSetCommandExecutor() {
             super("portal set", Constants.PortalSetPermission);
         }
 
@@ -33,17 +33,17 @@ public class PortalSetCommand extends CommandBase {
 
             Portal portal = PortalStore.getInstance().getPortalByName(args[0]);
             if (portal == null) {
-                this.error("Unknown portal '" + portal + "'!");
+                this.error("Unknown portal '" + args[0] + "'!");
                 return false;
             }
 
             if (this.getPlayer() != null) {
-                if ((portal.getOwner() == null || portal.getOwner().equals(this.getPlayer().getUniqueId())) && !this.getPlayer().hasPermission(Constants.ModifyOwnPortalPermission)) {
+                if ((portal.getOwner() == null || portal.getOwner().equals(this.getPlayer().getUniqueId())) && !this.hasPermission(Constants.ModifyOwnPortalPermission)) {
                     this.error("You do not have permission to modify this portal!");
                     return true;
                 }
 
-                if (portal.getOwner() != null && !portal.getOwner().equals(this.getPlayer().getUniqueId()) && !this.getPlayer().hasPermission(Constants.ModifyOtherPortalPermission)) {
+                if (portal.getOwner() != null && !portal.getOwner().equals(this.getPlayer().getUniqueId()) && !this.hasPermission(Constants.ModifyOtherPortalPermission)) {
                     OfflinePlayer player = Bukkit.getOfflinePlayer(portal.getOwner());
                     if (player == null) {
                         this.error("You do not have permission to modify a portal belonging to another player!");
@@ -98,7 +98,7 @@ public class PortalSetCommand extends CommandBase {
         }
 
         private boolean setDescription(Portal portal, String[] args) {
-            String description = String.join(" ", args);
+            String description = String.join(" ", (CharSequence[]) args);
 
             if (!(portal.getLocation().getBlock().getState() instanceof Sign)) {
                 this.error("Portal sign missing?");
@@ -124,16 +124,22 @@ public class PortalSetCommand extends CommandBase {
                     this.sendMessage("Portal '" + portal.getName() + "' exit vector cleared!");
                     return true;
                 }
-            } else if (args.length == 3 || args.length == 4) {
+            } else if (args.length == 3) {
                 float yaw;
                 float pitch;
                 float multiplier;
-                boolean isAbsolute = args.length == 4 && StringUtil.equalsIgnoreCase(args[3], "abs");
+                boolean isAbsolute = true;
+
+                String velocityRaw = args[2].trim();
+                if (velocityRaw.startsWith("x")) {
+                    isAbsolute = false;
+                    velocityRaw = velocityRaw.substring(1);
+                }
 
                 try {
                     yaw = Float.parseFloat(args[0]);
                     pitch = Float.parseFloat(args[1]);
-                    multiplier = Float.parseFloat(args[2]);
+                    multiplier = Float.parseFloat(velocityRaw);
                 } catch (NumberFormatException ex) {
                     this.error(ex.getMessage());
                     return false;
@@ -157,8 +163,8 @@ public class PortalSetCommand extends CommandBase {
 
                 portal.setExitHeading(new PortalExitHeading(yaw, pitch, multiplier, isAbsolute));
                 this.sendMessage("Portal '" + portal.getName() + "' exit heading set - pitch = " + pitch +
-                    ", yaw = " + yaw +
-                    ", velocity" + (!isAbsolute ? " multiplier" : "") + " = " + multiplier + "!");
+                    "°, yaw = " + yaw +
+                    "°, velocity" + (!isAbsolute ? " multiplier" : "") + " = " + multiplier + "!");
 
                 return true;
             }

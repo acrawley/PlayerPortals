@@ -1,28 +1,31 @@
 package net.andrewcr.minecraft.plugin.PlayerPortals.listeners;
 
+import net.andrewcr.minecraft.plugin.BasePluginLib.util.StringUtil;
 import net.andrewcr.minecraft.plugin.PlayerPortals.events.PlayerPortalsEntityPortalEvent;
 import net.andrewcr.minecraft.plugin.PlayerPortals.events.PlayerPortalsEntityPortalExitEvent;
 import net.andrewcr.minecraft.plugin.PlayerPortals.events.PlayerPortalsPlayerPortalEvent;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.config.ConfigStore;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.Portal;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalStore;
-import net.andrewcr.minecraft.plugin.BasePluginLib.util.StringUtil;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.*;
+import org.bukkit.event.entity.EntityPortalEnterEvent;
+import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
 
 public class PortalListener implements Listener {
     //region Private Fields
 
-    private PortalUsageTracker tracker;
+    private final PortalUsageTracker tracker;
 
     //endregion
 
@@ -97,7 +100,7 @@ public class PortalListener implements Listener {
         Vector velocityBefore = event.getEntity().getVelocity().clone();
         Vector velocityAfter;
 
-        if (ConfigStore.getInstance().isMomentumConserved()) {
+        if (ConfigStore.getInstance().isMomentumConserved() && destination.getPortal() != null) {
             velocityAfter = destination.getLocation().getDirection().multiply(velocityBefore.length());
             if (destination.getPortal().getExitHeading() != null) {
                 if (destination.getPortal().getExitHeading().isAbsoluteVelocity()) {
@@ -167,14 +170,14 @@ public class PortalListener implements Listener {
         // Send further portal events so other plugins can see
         if (entity instanceof Player) {
             PlayerPortalsPlayerPortalEvent teleportEvent = new PlayerPortalsPlayerPortalEvent(
-                originPortal, destinationPortal, (Player) entity, from, to, null, PlayerTeleportEvent.TeleportCause.PLUGIN);
+                originPortal, destinationPortal, (Player) entity, from, to);
 
             Bukkit.getServer().getPluginManager().callEvent(teleportEvent);
 
             return teleportEvent.isCancelled();
         } else {
             PlayerPortalsEntityPortalEvent teleportEvent = new PlayerPortalsEntityPortalEvent(
-                originPortal, destinationPortal, entity, from, to, null);
+                originPortal, destinationPortal, entity, from, to);
 
             Bukkit.getServer().getPluginManager().callEvent(teleportEvent);
 

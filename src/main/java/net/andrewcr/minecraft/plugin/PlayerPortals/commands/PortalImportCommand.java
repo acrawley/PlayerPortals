@@ -2,14 +2,13 @@ package net.andrewcr.minecraft.plugin.PlayerPortals.commands;
 
 import net.andrewcr.minecraft.plugin.BasePluginLib.command.CommandBase;
 import net.andrewcr.minecraft.plugin.BasePluginLib.command.CommandExecutorBase;
+import net.andrewcr.minecraft.plugin.BasePluginLib.util.LocationUtil;
 import net.andrewcr.minecraft.plugin.PlayerPortals.Constants;
 import net.andrewcr.minecraft.plugin.PlayerPortals.Plugin;
-import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.Portal;
-import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalStore;
-
-import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalMessage;
 import net.andrewcr.minecraft.plugin.PlayerPortals.listeners.SignListener;
-import net.andrewcr.minecraft.plugin.BasePluginLib.util.LocationUtil;
+import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.Portal;
+import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalMessage;
+import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalStore;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -30,7 +29,7 @@ public class PortalImportCommand extends CommandBase {
     }
 
     private class PortalImportCommandExecutor extends CommandExecutorBase {
-        public PortalImportCommandExecutor() {
+        PortalImportCommandExecutor() {
             super("portal import", Constants.ImportPortalsPermission);
         }
 
@@ -40,11 +39,10 @@ public class PortalImportCommand extends CommandBase {
                 return false;
             }
 
-            Collection<Portal> importedPortals = null;
+            Collection<Portal> importedPortals;
 
             String sourcePlugin = args[0].toLowerCase();
-            switch (sourcePlugin)
-            {
+            switch (sourcePlugin) {
                 case "myworlds":
                     importedPortals = this.importMyWorlds();
                     break;
@@ -114,10 +112,10 @@ public class PortalImportCommand extends CommandBase {
                         }
 
                         // Create portal using information from sign
-                        Sign portalSign = (Sign)location.getBlock().getState();
+                        Sign portalSign = (Sign) location.getBlock().getState();
                         Portal portal = new Portal(
                             location,
-                            LocationUtil.getSignAngle((Sign)location.getBlock().getState()),
+                            LocationUtil.getSignAngle((Sign) location.getBlock().getState()),
                             null,
                             ChatColor.stripColor(portalSign.getLine(1)),
                             ChatColor.stripColor(portalSign.getLine(2)),
@@ -131,13 +129,11 @@ public class PortalImportCommand extends CommandBase {
 
                         PortalStore.getInstance().addPortal(portal);
                         importedPortals.add(portal);
-                    }
-                    catch (Exception ex) {
+                    } catch (Exception ex) {
                         this.error("Invalid portal definition: " + line);
                     }
                 }
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 this.error("MyWorlds import failed!");
                 this.error(ex.toString());
             }

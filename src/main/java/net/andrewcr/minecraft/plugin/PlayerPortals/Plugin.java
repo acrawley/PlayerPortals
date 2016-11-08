@@ -12,19 +12,15 @@ import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalStore;
 public class Plugin extends PluginBase {
     //region Private Fields
 
-    @Getter
-    private PortalStore portalStore;
-    @Getter
-    private ConfigStore configStore;
-
-    @Getter
-    private static Plugin instance;
+    @Getter private static Plugin instance;
+    @Getter private PortalStore portalStore;
+    @Getter private ConfigStore configStore;
 
     //endregion
 
     @Override
     protected Version getRequiredBPLVersion() {
-        return new Version(1, 1);
+        return new Version(1, 2);
     }
 
     @Override

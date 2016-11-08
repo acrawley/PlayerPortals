@@ -1,11 +1,11 @@
 package net.andrewcr.minecraft.plugin.PlayerPortals.listeners;
 
+import net.andrewcr.minecraft.plugin.BasePluginLib.util.LocationUtil;
+import net.andrewcr.minecraft.plugin.BasePluginLib.util.StringUtil;
 import net.andrewcr.minecraft.plugin.PlayerPortals.Constants;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.Portal;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalMessage;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalStore;
-import net.andrewcr.minecraft.plugin.BasePluginLib.util.LocationUtil;
-import net.andrewcr.minecraft.plugin.BasePluginLib.util.StringUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
@@ -37,7 +37,7 @@ public class SignListener implements Listener {
 
         Portal portal = new Portal(
             portalLoc,
-            LocationUtil.getSignAngle((Sign)event.getBlock().getState()),
+            LocationUtil.getSignAngle((Sign) event.getBlock().getState()),
             event.getPlayer().getUniqueId(),
             event.getLine(1),
             event.getLine(2),
@@ -123,7 +123,7 @@ public class SignListener implements Listener {
                 continue;
             }
 
-            Sign portalSign = (Sign)portal.getLocation().getBlock().getState();
+            Sign portalSign = (Sign) portal.getLocation().getBlock().getState();
             PortalMessage error = portal.validatePortal();
             ChatColor color;
 

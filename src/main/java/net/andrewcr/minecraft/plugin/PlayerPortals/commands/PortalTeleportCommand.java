@@ -14,7 +14,7 @@ public class PortalTeleportCommand extends CommandBase {
     }
 
     private class PortalTeleportCommandExecutor extends CommandExecutorBase {
-        public PortalTeleportCommandExecutor() {
+        PortalTeleportCommandExecutor() {
             super("ptp", Constants.TeleportCommandPermission);
         }
 

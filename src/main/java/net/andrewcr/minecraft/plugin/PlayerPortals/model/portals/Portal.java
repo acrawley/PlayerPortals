@@ -2,34 +2,32 @@ package net.andrewcr.minecraft.plugin.PlayerPortals.model.portals;
 
 import lombok.Getter;
 import lombok.Synchronized;
+import net.andrewcr.minecraft.plugin.BasePluginLib.util.LocationUtil;
 import net.andrewcr.minecraft.plugin.BasePluginLib.util.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.block.Sign;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.SerializableAs;
+import org.bukkit.configuration.ConfigurationSection;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.UUID;
 
-@SerializableAs("Portal")
-public class Portal implements ConfigurationSerializable {
+public class Portal {
+    private static final String SIGN_POSITION_KEY = "SignPosition";
+    private static final String SIGN_ANGLE_KEY = "SignAngle";
+    private static final String OWNER_KEY = "Owner";
+    private static final String DESTINATION_KEY = "Destination";
+    private static final String DESCRIPTION_KEY = "Description";
+    private static final String PORTAL_EXIT_HEADING_KEY = "PortalExitHeading";
+
     private final Object configLock = PortalStore.getInstance().getSyncObj();
 
     private final Location location;
-    @Getter
-    private final float signAngle;
-    @Getter
-    private final String name;
-    @Getter
-    private final String destination;
-    @Getter
-    private UUID owner;
-    @Getter
-    private String description;
-    private PortalExitHeading exitHeading;
+    @Getter private final float signAngle;
+    @Getter private final String name;
+    @Getter private final String destination;
+    @Getter private UUID owner;
+    @Getter private String description;
+    @Getter private PortalExitHeading exitHeading;
 
     public Portal(Location location, float signAngle, UUID owner, String name, String destination, String description) {
         this.location = location;
@@ -42,100 +40,72 @@ public class Portal implements ConfigurationSerializable {
 
     //region Serialization
 
-    public static Portal deserialize(Map<String, Object> data) {
-        UUID owner = null;
+    public static Portal loadFrom(ConfigurationSection portalSection) {
+        String name =  portalSection.getName();
         Location signPosition;
-        float signAngle = 0;
-        String name = null;
-        String destination = null;
-        String message = null;
 
-        // All portals must have a world and position
-        if (!data.containsKey("World") || !data.containsKey("SignPosition")) {
+        float signAngle = 0;
+        UUID owner = null;
+        String description = null;
+        String destination = null;
+
+        // All portals must have a position
+        if (!portalSection.contains(SIGN_POSITION_KEY)) {
             return null;
         }
 
-        World world = Bukkit.getWorld((String) data.get("World"));
-        String[] positionParts = ((String) data.get("SignPosition")).split(",");
-        signPosition = new Location(
-            world,
-            Integer.parseInt(positionParts[0].trim()),
-            Integer.parseInt(positionParts[1].trim()),
-            Integer.parseInt(positionParts[2].trim()));
+        signPosition = LocationUtil.locationFromString(portalSection.getString(SIGN_POSITION_KEY));
 
-        if (data.containsKey("SignAngle")) {
-            signAngle = ((Double) data.get("SignAngle")).floatValue();
+        if (portalSection.contains(SIGN_ANGLE_KEY)) {
+            signAngle = (float) portalSection.getDouble(SIGN_ANGLE_KEY);
         }
 
-        if (data.containsKey("Owner")) {
-            owner = UUID.fromString((String) data.get("Owner"));
+        if (portalSection.contains(OWNER_KEY)) {
+            owner = UUID.fromString(portalSection.getString(OWNER_KEY));
         }
 
-        if (data.containsKey("Name")) {
-            name = (String) data.get("Name");
+        if (portalSection.contains(DESCRIPTION_KEY)) {
+            description = portalSection.getString(DESCRIPTION_KEY);
         }
 
-        if (data.containsKey("Description")) {
-            message = (String) data.get("Description");
+        if (portalSection.contains(DESTINATION_KEY)) {
+            destination = portalSection.getString(DESTINATION_KEY);
         }
 
-        if (data.containsKey("Destination")) {
-            destination = (String) data.get("Destination");
-        }
+        Portal portal = new Portal(signPosition, signAngle, owner, name, destination, description);
 
-        Portal portal = new Portal(signPosition, signAngle, owner, name, destination, message);
-
-        if (data.containsKey("PortalExitHeading")) {
-            String[] headingParts = ((String) data.get("PortalExitHeading")).split(",");
-
-            String[] velocityParts = headingParts[2].trim().split(" ");
-
-            portal.setExitHeading(new PortalExitHeading(
-                Double.valueOf(headingParts[0].trim()).floatValue(),
-                Double.valueOf(headingParts[1].trim()).floatValue(),
-                Double.valueOf(velocityParts[0].trim()).floatValue(),
-                velocityParts.length == 2 && StringUtil.equalsIgnoreCase(velocityParts[1], "abs")));
+        if (portalSection.contains(PORTAL_EXIT_HEADING_KEY)) {
+            portal.setExitHeading(PortalExitHeading.fromString(portalSection.getString(PORTAL_EXIT_HEADING_KEY)));
         }
 
         return portal;
     }
 
     @Synchronized("configLock")
-    public Map<String, Object> serialize() {
-        // Use a LinkedHashMap to maintain property ordering in serialized format
-        Map<String, Object> data = new LinkedHashMap<>();
+    public void save(ConfigurationSection portals) {
+        ConfigurationSection portal = portals.createSection(this.name);
 
-        if (!StringUtil.isNullOrEmpty(this.name)) {
-            data.put("Name", this.name);
-        }
-
-        data.put("World", this.location.getWorld().getName());
-        data.put("SignPosition", this.location.getBlockX() + ", " + location.getBlockY() + ", " + location.getBlockZ());
+        portal.set(SIGN_POSITION_KEY, LocationUtil.locationToIntString(location, true, false, false));
 
         if (this.signAngle != 0) {
-            data.put("SignAngle", this.signAngle);
+            portal.set(SIGN_ANGLE_KEY, this.signAngle);
         }
 
         if (!StringUtil.isNullOrEmpty(this.destination)) {
-            data.put("Destination", this.destination);
+            portal.set(DESTINATION_KEY, this.destination);
         }
 
         if (!StringUtil.isNullOrEmpty(this.description)) {
-            data.put("Description", this.description);
+            portal.set(DESCRIPTION_KEY, this.description);
         }
 
         if (this.owner != null) {
-            data.put("Owner", this.owner.toString());
+            portal.set(OWNER_KEY, this.owner.toString());
         }
 
         if (this.exitHeading != null) {
-            data.put("PortalExitHeading", this.exitHeading.getYaw() + ", "
-                + this.exitHeading.getPitch() + ", "
-                + this.exitHeading.getVelocityMultiplier()
-                + (this.exitHeading.isAbsoluteVelocity() ? " abs" : ""));
+            portal.set(PORTAL_EXIT_HEADING_KEY, this.exitHeading.toString());
         }
-
-        return data;
     }
 
     //endregion
@@ -144,19 +114,17 @@ public class Portal implements ConfigurationSerializable {
 
     public PortalMessage validatePortal() {
         // Errors - prevent the portal from being created
-        if (!StringUtil.isNullOrEmpty(this.name)) {
-            Portal dupePortal = PortalStore.getInstance().getPortalByName(this.name);
-            if (dupePortal != null && dupePortal != this) {
-                return PortalMessage.CreateError("A portal named '" + this.name + "' already exists!");
-            }
-
-            if (Bukkit.getWorld(this.name) != null) {
-                return PortalMessage.CreateError("Portal cannot have the same name as world '" + this.name + "'!");
-            }
+        if (StringUtil.isNullOrEmpty(this.name)) {
+            return PortalMessage.CreateError("Portal does not have a name!");
         }
 
-        if (StringUtil.isNullOrEmpty(this.name) && StringUtil.isNullOrEmpty(this.destination)) {
-            return PortalMessage.CreateError("Portal must have a name, a destination, or both!");
+        Portal dupePortal = PortalStore.getInstance().getPortalByName(this.name);
+        if (dupePortal != null && dupePortal != this) {
+            return PortalMessage.CreateError("A portal named '" + this.name + "' already exists!");
+        }
+
+        if (Bukkit.getWorld(this.name) != null) {
+            return PortalMessage.CreateError("Portal cannot have the same name as world '" + this.name + "'!");
         }
 
         if (StringUtil.equals(this.name, this.destination)) {
@@ -191,8 +159,10 @@ public class Portal implements ConfigurationSerializable {
         return this.location.clone();
     }
 
-    public PortalExitHeading getExitHeading() {
-        return this.exitHeading;
+    @Synchronized("configLock")
+    public void setExitHeading(PortalExitHeading exitHeading) {
+        this.exitHeading = exitHeading;
+        PortalStore.getInstance().notifyChanged();
     }
 
     @Synchronized("configLock")
@@ -204,12 +174,6 @@ public class Portal implements ConfigurationSerializable {
     @Synchronized("configLock")
     public void setDescription(String description) {
         this.description = description;
-        PortalStore.getInstance().notifyChanged();
-    }
-
-    @Synchronized("configLock")
-    public void setExitHeading(PortalExitHeading exitHeading) {
-        this.exitHeading = exitHeading;
         PortalStore.getInstance().notifyChanged();
     }
 }

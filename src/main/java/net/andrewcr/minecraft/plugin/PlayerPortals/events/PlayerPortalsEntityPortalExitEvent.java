@@ -8,10 +8,8 @@ import org.bukkit.event.entity.EntityPortalExitEvent;
 import org.bukkit.util.Vector;
 
 public class PlayerPortalsEntityPortalExitEvent extends EntityPortalExitEvent {
-    @Getter
-    private final Portal originPortal;
-    @Getter
-    private final Portal destinationPortal;
+    @Getter private final Portal originPortal;
+    @Getter private final Portal destinationPortal;
 
     public PlayerPortalsEntityPortalExitEvent(Portal originPortal, Portal destinationPortal, Entity entity, Location from, Location to, Vector before, Vector after) {
         super(entity, from, to, before, after);

@@ -11,7 +11,7 @@ public class PortalCommand extends CommandBase {
     }
 
     private class PortalCommandExecutor extends GroupCommandExecutorBase {
-        public PortalCommandExecutor() {
+        PortalCommandExecutor() {
             super("portal");
         }
     }

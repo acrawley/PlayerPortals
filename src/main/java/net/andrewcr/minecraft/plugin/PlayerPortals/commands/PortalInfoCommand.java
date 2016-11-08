@@ -2,11 +2,11 @@ package net.andrewcr.minecraft.plugin.PlayerPortals.commands;
 
 import net.andrewcr.minecraft.plugin.BasePluginLib.command.CommandBase;
 import net.andrewcr.minecraft.plugin.BasePluginLib.command.CommandExecutorBase;
+import net.andrewcr.minecraft.plugin.BasePluginLib.util.StringUtil;
 import net.andrewcr.minecraft.plugin.PlayerPortals.Constants;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.Portal;
-import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalStore;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalMessage;
-import net.andrewcr.minecraft.plugin.BasePluginLib.util.StringUtil;
+import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalStore;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -18,7 +18,7 @@ public class PortalInfoCommand extends CommandBase {
     }
 
     private class PortalInfoCommandExecutor extends CommandExecutorBase {
-        public PortalInfoCommandExecutor() {
+        PortalInfoCommandExecutor() {
             super("portal info", Constants.PortalInfoPermission);
         }
 
@@ -53,6 +53,10 @@ public class PortalInfoCommand extends CommandBase {
                 this.sendMessage("  Destination: " + portal.getDestination());
             }
 
+            if (!StringUtil.isNullOrEmpty(portal.getDescription())) {
+                this.sendMessage("  Description: " + portal.getDescription());
+            }
+
             if (portal.getOwner() != null) {
                 OfflinePlayer owner = Bukkit.getOfflinePlayer(portal.getOwner());
                 this.sendMessage("  Owner: " + ((owner == null) ? "(unknown player)" : owner.getName()));
@@ -60,8 +64,8 @@ public class PortalInfoCommand extends CommandBase {
 
             if (portal.getExitHeading() != null) {
                 this.sendMessage("  Exit heading: Yaw = " + portal.getExitHeading().getYaw() +
-                    " Pitch = " + portal.getExitHeading().getPitch() +
-                    " Velocity" + (portal.getExitHeading().isAbsoluteVelocity() ? "" : " Multiplier") + " = " + portal.getExitHeading().getVelocityMultiplier());
+                    "°, Pitch = " + portal.getExitHeading().getPitch() +
+                    "°, Velocity" + (portal.getExitHeading().isAbsoluteVelocity() ? "" : " Multiplier") + " = " + portal.getExitHeading().getVelocityMultiplier());
             }
 
             PortalMessage message = portal.validatePortal();

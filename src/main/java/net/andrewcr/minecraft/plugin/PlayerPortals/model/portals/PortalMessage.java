@@ -5,8 +5,8 @@ import lombok.Getter;
 public class PortalMessage {
     //region Private Fields
 
-    @Getter private boolean isError;
-    @Getter private String message;
+    @Getter private final boolean isError;
+    @Getter private final String message;
 
     //endregion
 
