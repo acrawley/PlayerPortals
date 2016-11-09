@@ -45,7 +45,7 @@ public class PortalTeleportCommand extends CommandBase {
                 return false;
             }
 
-            PortalDestination destination = PortalDestination.getPortalDestination(destinationName);
+            PortalDestination destination = PortalDestination.getPortalDestination(destinationName, player);
             if (destination == null) {
                 error("Unknown destination '" + args[0] + "'!");
                 return false;

@@ -3,6 +3,7 @@ package net.andrewcr.minecraft.plugin.PlayerPortals.listeners;
 import net.andrewcr.minecraft.plugin.BasePluginLib.util.LocationUtil;
 import net.andrewcr.minecraft.plugin.BasePluginLib.util.StringUtil;
 import net.andrewcr.minecraft.plugin.PlayerPortals.Constants;
+import net.andrewcr.minecraft.plugin.PlayerPortals.integration.dynmap.DynmapIntegration;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.Portal;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalMessage;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalStore;
@@ -58,6 +59,7 @@ public class SignListener implements Listener {
         }
 
         PortalStore.getInstance().addPortal(portal);
+        DynmapIntegration.getInstance().notifyPortalCreated(portal);
 
         event.getPlayer().sendMessage("Created a new portal" +
             (!StringUtil.isNullOrEmpty(portal.getName()) ? " '" + portal.getName() + "'" : "") +
@@ -95,6 +97,7 @@ public class SignListener implements Listener {
         }
 
         PortalStore.getInstance().removePortal(portal);
+        DynmapIntegration.getInstance().notifyPortalRemoved(portal);
 
         player.sendMessage("Removed portal" +
             (!StringUtil.isNullOrEmpty(portal.getName()) ? " '" + portal.getName() + "'" : "") +

@@ -4,6 +4,8 @@ import lombok.Getter;
 import net.andrewcr.minecraft.plugin.BasePluginLib.plugin.PluginBase;
 import net.andrewcr.minecraft.plugin.BasePluginLib.util.Version;
 import net.andrewcr.minecraft.plugin.PlayerPortals.commands.*;
+import net.andrewcr.minecraft.plugin.PlayerPortals.integration.distributedspawns.DistributedSpawnsIntegration;
+import net.andrewcr.minecraft.plugin.PlayerPortals.integration.dynmap.DynmapIntegration;
 import net.andrewcr.minecraft.plugin.PlayerPortals.listeners.PortalListener;
 import net.andrewcr.minecraft.plugin.PlayerPortals.listeners.SignListener;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.config.ConfigStore;
@@ -15,6 +17,8 @@ public class Plugin extends PluginBase {
     @Getter private static Plugin instance;
     @Getter private PortalStore portalStore;
     @Getter private ConfigStore configStore;
+    @Getter private DistributedSpawnsIntegration distributedSpawnsIntegration;
+    @Getter private DynmapIntegration dynmapIntegration;
 
     //endregion
 
@@ -46,14 +50,17 @@ public class Plugin extends PluginBase {
 
         this.portalStore.load();
         this.configStore.load();
+
+        // Integration with other plugins
+        this.distributedSpawnsIntegration = new DistributedSpawnsIntegration();
+        this.dynmapIntegration = new DynmapIntegration();
     }
 
     @Override
     public void onDisableCore() {
         // Save data
         this.portalStore.save();
-
-        // Configuration isn't modified by the plugin, no need to save it
+        this.configStore.save();
 
         Plugin.instance = null;
     }

@@ -8,7 +8,14 @@ import org.bukkit.configuration.file.YamlConfiguration;
 public class ConfigStore extends ConfigurationFileBase {
     //region Private Fields
 
-    @Getter private final boolean isMomentumConserved = true;
+    private static final String CONFIGURATION_VERSION_KEY = "ConfigurationVersion";
+    private static final String IS_MOMENTUM_CONSERVED_KEY = "IsMomentumConserved";
+    private static final String DISTRIBUTED_SPAWNS_INTEGRATION_ENABLED_KEY = "DistributedSpawnsIntegrationEnabled";
+    private static final String DYNMAP_INTEGRATION_ENABLED_KEY = "DynmapIntegrationEnabled";
+
+    @Getter private boolean isMomentumConserved = true;
+    @Getter private boolean distributedSpawnsIntegrationEnabled = true;
+    @Getter private boolean dynmapIntegrationEnabled = false;
 
     //endregion
 
@@ -38,7 +45,7 @@ public class ConfigStore extends ConfigurationFileBase {
 
     @Override
     protected void loadCore(YamlConfiguration configuration) {
-            String version = configuration.getString("ConfigurationVersion");
+            String version = configuration.getString(CONFIGURATION_VERSION_KEY);
             switch (version) {
                 case "1.0":
                     this.loadV1_0Config(configuration);
@@ -51,13 +58,17 @@ public class ConfigStore extends ConfigurationFileBase {
     }
 
     private void loadV1_0Config(YamlConfiguration config) {
-        config.getBoolean("IsMomentumConserved", this.isMomentumConserved);
+        this.isMomentumConserved = config.getBoolean(IS_MOMENTUM_CONSERVED_KEY, this.isMomentumConserved);
+        this.distributedSpawnsIntegrationEnabled = config.getBoolean(DISTRIBUTED_SPAWNS_INTEGRATION_ENABLED_KEY, this.distributedSpawnsIntegrationEnabled);
+        this.dynmapIntegrationEnabled = config.getBoolean(DYNMAP_INTEGRATION_ENABLED_KEY, this.dynmapIntegrationEnabled);
     }
 
     @Override
     protected void saveCore(YamlConfiguration configuration) {
-        configuration.set("ConfigurationVersion", "1.0");
-        configuration.set("IsMomentumConserved", this.isMomentumConserved);
+        configuration.set(CONFIGURATION_VERSION_KEY, "1.0");
+        configuration.set(IS_MOMENTUM_CONSERVED_KEY, this.isMomentumConserved);
+        configuration.set(DISTRIBUTED_SPAWNS_INTEGRATION_ENABLED_KEY, this.distributedSpawnsIntegrationEnabled);
+        configuration.set(DYNMAP_INTEGRATION_ENABLED_KEY, this.dynmapIntegrationEnabled);
     }
 
     //endregion

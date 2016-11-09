@@ -1,9 +1,9 @@
 package net.andrewcr.minecraft.plugin.PlayerPortals.listeners;
 
 import net.andrewcr.minecraft.plugin.BasePluginLib.util.StringUtil;
-import net.andrewcr.minecraft.plugin.PlayerPortals.events.PlayerPortalsEntityPortalEvent;
-import net.andrewcr.minecraft.plugin.PlayerPortals.events.PlayerPortalsEntityPortalExitEvent;
-import net.andrewcr.minecraft.plugin.PlayerPortals.events.PlayerPortalsPlayerPortalEvent;
+import net.andrewcr.minecraft.plugin.PlayerPortals.api.events.PlayerPortalsEntityPortalEvent;
+import net.andrewcr.minecraft.plugin.PlayerPortals.api.events.PlayerPortalsEntityPortalExitEvent;
+import net.andrewcr.minecraft.plugin.PlayerPortals.api.events.PlayerPortalsPlayerPortalEvent;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.config.ConfigStore;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.Portal;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalStore;
@@ -68,7 +68,10 @@ public class PortalListener implements Listener {
         }
 
         // Find destination
-        PortalDestination destination = PortalDestination.getPortalDestination(enteredPortal.getDestination());
+        PortalDestination destination = PortalDestination.getPortalDestination(
+            enteredPortal.getDestination(),
+            (event.getEntity() instanceof Player) ? (Player) event.getEntity() : null);
+
         if (destination == null) {
             event.getEntity().sendMessage(ChatColor.YELLOW + "Unknown destination '" + enteredPortal.getDestination() + "'!");
             return;

@@ -3,11 +3,13 @@ package net.andrewcr.minecraft.plugin.PlayerPortals.listeners;
 import lombok.Data;
 import net.andrewcr.minecraft.plugin.BasePluginLib.util.LocationUtil;
 import net.andrewcr.minecraft.plugin.BasePluginLib.util.StringUtil;
+import net.andrewcr.minecraft.plugin.PlayerPortals.integration.distributedspawns.DistributedSpawnsIntegration;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.Portal;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalStore;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 
 @Data
 public class PortalDestination {
@@ -15,7 +17,7 @@ public class PortalDestination {
     private final String description;
     private final Portal portal;
 
-    public static PortalDestination getPortalDestination(String destinationName) {
+    public static PortalDestination getPortalDestination(String destinationName, Player player) {
         Portal targetPortal = PortalStore.getInstance().getPortalByName(destinationName);
         if (targetPortal != null) {
             // Target is a portal - destination is one block below its sign (so we consider the block the sign is on when finding a safe location)
@@ -37,8 +39,15 @@ public class PortalDestination {
             World world = Bukkit.getWorld(destinationName);
             if (world != null) {
                 // Target is a world - get its spawn point
+                Location spawnLoc;
+                if (player != null) {
+                    spawnLoc = DistributedSpawnsIntegration.getInstance().getPlayerSpawnLocation(world, player);
+                } else {
+                    spawnLoc = world.getSpawnLocation();
+                }
+
                 return new PortalDestination(
-                    world.getSpawnLocation(),
+                    spawnLoc,
                     world.getName(),
                     null);
             }

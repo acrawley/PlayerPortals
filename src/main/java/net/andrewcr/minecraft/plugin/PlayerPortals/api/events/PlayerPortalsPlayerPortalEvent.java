@@ -1,4 +1,4 @@
-package net.andrewcr.minecraft.plugin.PlayerPortals.events;
+package net.andrewcr.minecraft.plugin.PlayerPortals.api.events;
 
 import lombok.Getter;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.Portal;

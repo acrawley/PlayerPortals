@@ -3,7 +3,7 @@ main: net.andrewcr.minecraft.plugin.PlayerPortals.Plugin
 version: 1.0
 authors: [ andrewcr ]
 depend: [ BasePluginLib ]
-softdepend: [ Multiverse-Core ]
+softdepend: [ Multiverse-Core, dynmap, DistributedSpawns ]
 
 commands:
   portal:
