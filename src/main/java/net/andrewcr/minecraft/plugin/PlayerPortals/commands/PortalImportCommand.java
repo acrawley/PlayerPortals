@@ -3,6 +3,7 @@ package net.andrewcr.minecraft.plugin.PlayerPortals.commands;
 import net.andrewcr.minecraft.plugin.BasePluginLib.command.CommandBase;
 import net.andrewcr.minecraft.plugin.BasePluginLib.command.CommandExecutorBase;
 import net.andrewcr.minecraft.plugin.BasePluginLib.util.LocationUtil;
+import net.andrewcr.minecraft.plugin.BasePluginLib.util.StringUtil;
 import net.andrewcr.minecraft.plugin.PlayerPortals.Constants;
 import net.andrewcr.minecraft.plugin.PlayerPortals.Plugin;
 import net.andrewcr.minecraft.plugin.PlayerPortals.listeners.SignListener;
@@ -108,22 +109,42 @@ public class PortalImportCommand extends CommandBase {
 
                         if (!(location.getBlock().getState() instanceof Sign)) {
                             this.error("No portal sign found at location (" + parts[2] + ", " + parts[3] + ", " + parts[4] + ")!");
+                            this.error("  Line: " + line);
                             continue;
                         }
 
                         // Create portal using information from sign
+                        // MyWorlds sign format:
+                        //  Line 1: [portal]
+                        //  Line 2: Portal name
+                        //  Line 3: Destination name
+                        //  Line 4: Value to use in "You teleported to..." message
                         Sign portalSign = (Sign) location.getBlock().getState();
+
+                        String portalName = ChatColor.stripColor(portalSign.getLine(1));
+                        if (StringUtil.isNullOrEmpty(portalName)) {
+                            // MyWorlds allows portals with no names, so make one up
+                            portalName = world.getName() + "-"
+                                + location.getBlockX() + ","
+                                + location.getBlockY() + ","
+                                + location.getBlockZ();
+
+                            portalSign.setLine(1, portalName);
+                            portalSign.update();
+                        }
+
                         Portal portal = new Portal(
                             location,
                             LocationUtil.getSignAngle((Sign) location.getBlock().getState()),
                             null,
-                            ChatColor.stripColor(portalSign.getLine(1)),
+                            portalName,
                             ChatColor.stripColor(portalSign.getLine(2)),
                             ChatColor.stripColor(portalSign.getLine(3)));
 
                         PortalMessage message = portal.validatePortal();
                         if (message != null && message.isError()) {
                             this.error("Cannot import portal - " + message.getMessage());
+                            this.error("  Line: " + line);
                             continue;
                         }
 
