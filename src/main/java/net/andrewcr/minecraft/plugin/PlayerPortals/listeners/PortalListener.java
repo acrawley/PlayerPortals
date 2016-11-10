@@ -1,6 +1,7 @@
 package net.andrewcr.minecraft.plugin.PlayerPortals.listeners;
 
 import net.andrewcr.minecraft.plugin.BasePluginLib.util.StringUtil;
+import net.andrewcr.minecraft.plugin.PlayerPortals.Plugin;
 import net.andrewcr.minecraft.plugin.PlayerPortals.api.events.PlayerPortalsEntityPortalEvent;
 import net.andrewcr.minecraft.plugin.PlayerPortals.api.events.PlayerPortalsEntityPortalExitEvent;
 import net.andrewcr.minecraft.plugin.PlayerPortals.api.events.PlayerPortalsPlayerPortalEvent;
@@ -20,6 +21,7 @@ import org.bukkit.event.entity.EntityPortalEnterEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class PortalListener implements Listener {
@@ -131,10 +133,19 @@ public class PortalListener implements Listener {
         // Send portal exit event
         Bukkit.getServer().getPluginManager().callEvent(exitEvent);
 
-        event.getEntity().teleport(destination.getLocation());
-        event.getEntity().sendMessage("You warped to '" + destination.getDescription() + "'!");
-        event.getEntity().setFallDistance(0);
-        event.getEntity().setVelocity(exitEvent.getAfter());
+        // EntityPortalEnterEvent is fired as part of the entity's "move" logic.  The server calculates the distance between
+        //  the position at the start of that logic and the position at the end, and uses that difference to (e.g.) calculate
+        //  the amount of exhaustion that results from the move.  If we do the teleport directly from the event, it'll cause
+        //  all sorts of weirdness, so instead, schedule a task and do it on the next tick when we're not in the move logic.
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                event.getEntity().teleport(destination.getLocation());
+                event.getEntity().sendMessage("You warped to '" + destination.getDescription() + "'!");
+                event.getEntity().setFallDistance(0);
+                event.getEntity().setVelocity(exitEvent.getAfter());
+            }
+        }.runTaskLater(Plugin.getInstance(), 1);
     }
 
     @EventHandler
