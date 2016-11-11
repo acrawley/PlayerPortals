@@ -110,7 +110,7 @@ public class PortalSetCommand extends CommandBase {
             portalSign.setLine(3, ChatColor.BLUE + ChatColor.stripColor(description));
             portalSign.update();
 
-            portal.setDescription(description);
+            portal.setMessage(description);
 
             this.sendMessage("Portal '" + portal.getName() + "' description set to '" + description + "'!");
 

@@ -97,7 +97,7 @@ public class DynmapIntegration {
         // Create marker
         markerSet.createMarker(
             markerId,
-            !StringUtil.isNullOrEmpty(portal.getDescription()) ? portal.getDescription() : portal.getName(),
+            !StringUtil.isNullOrEmpty(portal.getMessage()) ? portal.getMessage() : portal.getName(),
             portalLoc.getWorld().getName(),
             portalLoc.getX(),
             portalLoc.getY(),

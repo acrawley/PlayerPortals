@@ -16,7 +16,7 @@ public class Portal {
     private static final String SIGN_ANGLE_KEY = "SignAngle";
     private static final String OWNER_KEY = "Owner";
     private static final String DESTINATION_KEY = "Destination";
-    private static final String DESCRIPTION_KEY = "Description";
+    private static final String MESSAGE_KEY = "Message";
     private static final String PORTAL_EXIT_HEADING_KEY = "PortalExitHeading";
 
     private final Object configLock = PortalStore.getInstance().getSyncObj();
@@ -26,16 +26,16 @@ public class Portal {
     @Getter private final String name;
     @Getter private final String destination;
     @Getter private UUID owner;
-    @Getter private String description;
+    @Getter private String message;
     @Getter private PortalExitHeading exitHeading;
 
-    public Portal(Location location, float signAngle, UUID owner, String name, String destination, String description) {
+    public Portal(Location location, float signAngle, UUID owner, String name, String destination, String message) {
         this.location = location;
         this.signAngle = signAngle;
         this.owner = owner;
         this.name = name;
         this.destination = destination;
-        this.description = description;
+        this.message = message;
     }
 
     //region Serialization
@@ -64,8 +64,8 @@ public class Portal {
             owner = UUID.fromString(portalSection.getString(OWNER_KEY));
         }
 
-        if (portalSection.contains(DESCRIPTION_KEY)) {
-            description = portalSection.getString(DESCRIPTION_KEY);
+        if (portalSection.contains(MESSAGE_KEY)) {
+            description = portalSection.getString(MESSAGE_KEY);
         }
 
         if (portalSection.contains(DESTINATION_KEY)) {
@@ -95,8 +95,8 @@ public class Portal {
             portal.set(DESTINATION_KEY, this.destination);
         }
 
-        if (!StringUtil.isNullOrEmpty(this.description)) {
-            portal.set(DESCRIPTION_KEY, this.description);
+        if (!StringUtil.isNullOrEmpty(this.message)) {
+            portal.set(MESSAGE_KEY, this.message);
         }
 
         if (this.owner != null) {
@@ -172,8 +172,8 @@ public class Portal {
     }
 
     @Synchronized("configLock")
-    public void setDescription(String description) {
-        this.description = description;
+    public void setMessage(String message) {
+        this.message = message;
         PortalStore.getInstance().notifyChanged();
     }
 }

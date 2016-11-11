@@ -17,7 +17,18 @@ public class PortalDestination {
     private final String description;
     private final Portal portal;
 
-    public static PortalDestination getPortalDestination(String destinationName, Player player) {
+    public static PortalDestination getPortalDestination(Portal sourcePortal, Player player) {
+        return PortalDestination.getPortalDestination(
+            sourcePortal.getDestination(),
+            !StringUtil.isNullOrEmpty(sourcePortal.getMessage())?sourcePortal.getMessage():sourcePortal.getDestination(),
+            player);
+    }
+
+    public static PortalDestination getPortalDestinationByName(String destinationName, Player player) {
+        return PortalDestination.getPortalDestination(destinationName, destinationName, player);
+    }
+
+    private static PortalDestination getPortalDestination(String destinationName, String message, Player player) {
         Portal targetPortal = PortalStore.getInstance().getPortalByName(destinationName);
         if (targetPortal != null) {
             // Target is a portal - destination is one block below its sign (so we consider the block the sign is on when finding a safe location)
@@ -33,7 +44,7 @@ public class PortalDestination {
             // Find unobstructed location at destination
             return new PortalDestination(
                 destLocation,
-                !StringUtil.isNullOrEmpty(targetPortal.getDescription()) ? targetPortal.getDescription() : targetPortal.getName(),
+                message,
                 targetPortal);
         } else {
             World world = Bukkit.getWorld(destinationName);

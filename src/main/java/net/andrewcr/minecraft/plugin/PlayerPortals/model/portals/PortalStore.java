@@ -8,8 +8,8 @@ import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 public class PortalStore extends ConfigurationFileBase {
@@ -27,7 +27,7 @@ public class PortalStore extends ConfigurationFileBase {
 
     public PortalStore() {
         super(Plugin.getInstance());
-        this.portals = new LinkedHashMap<>();
+        this.portals = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     }
 
     //endregion

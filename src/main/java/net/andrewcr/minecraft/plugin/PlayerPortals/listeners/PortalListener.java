@@ -71,7 +71,7 @@ public class PortalListener implements Listener {
 
         // Find destination
         PortalDestination destination = PortalDestination.getPortalDestination(
-            enteredPortal.getDestination(),
+            enteredPortal,
             (event.getEntity() instanceof Player) ? (Player) event.getEntity() : null);
 
         if (destination == null) {

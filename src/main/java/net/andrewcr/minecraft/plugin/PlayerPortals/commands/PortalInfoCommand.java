@@ -53,8 +53,8 @@ public class PortalInfoCommand extends CommandBase {
                 this.sendMessage("  Destination: " + portal.getDestination());
             }
 
-            if (!StringUtil.isNullOrEmpty(portal.getDescription())) {
-                this.sendMessage("  Description: " + portal.getDescription());
+            if (!StringUtil.isNullOrEmpty(portal.getMessage())) {
+                this.sendMessage("  Message: " + portal.getMessage());
             }
 
             if (portal.getOwner() != null) {
