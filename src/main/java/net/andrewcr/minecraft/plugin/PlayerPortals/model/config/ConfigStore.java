@@ -12,10 +12,12 @@ public class ConfigStore extends ConfigurationFileBase {
     private static final String IS_MOMENTUM_CONSERVED_KEY = "IsMomentumConserved";
     private static final String DISTRIBUTED_SPAWNS_INTEGRATION_ENABLED_KEY = "DistributedSpawnsIntegrationEnabled";
     private static final String DYNMAP_INTEGRATION_ENABLED_KEY = "DynmapIntegrationEnabled";
+    private static final String PORTAL_BLOCK_PHYSICS_ENABLED_KEY = "PortalBlockPhysicsEnabled";
 
     @Getter private boolean isMomentumConserved = true;
     @Getter private boolean distributedSpawnsIntegrationEnabled = true;
     @Getter private boolean dynmapIntegrationEnabled = false;
+    @Getter private boolean portalBlockPhysicsEnabled = true;
 
     //endregion
 
@@ -61,14 +63,17 @@ public class ConfigStore extends ConfigurationFileBase {
         this.isMomentumConserved = config.getBoolean(IS_MOMENTUM_CONSERVED_KEY, this.isMomentumConserved);
         this.distributedSpawnsIntegrationEnabled = config.getBoolean(DISTRIBUTED_SPAWNS_INTEGRATION_ENABLED_KEY, this.distributedSpawnsIntegrationEnabled);
         this.dynmapIntegrationEnabled = config.getBoolean(DYNMAP_INTEGRATION_ENABLED_KEY, this.dynmapIntegrationEnabled);
+        this.portalBlockPhysicsEnabled = config.getBoolean(PORTAL_BLOCK_PHYSICS_ENABLED_KEY, this.portalBlockPhysicsEnabled);
     }
 
     @Override
     protected void saveCore(YamlConfiguration configuration) {
         configuration.set(CONFIGURATION_VERSION_KEY, "1.0");
+
         configuration.set(IS_MOMENTUM_CONSERVED_KEY, this.isMomentumConserved);
         configuration.set(DISTRIBUTED_SPAWNS_INTEGRATION_ENABLED_KEY, this.distributedSpawnsIntegrationEnabled);
         configuration.set(DYNMAP_INTEGRATION_ENABLED_KEY, this.dynmapIntegrationEnabled);
+        configuration.set(PORTAL_BLOCK_PHYSICS_ENABLED_KEY, this.portalBlockPhysicsEnabled);
     }
 
     //endregion

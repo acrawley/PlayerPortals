@@ -12,11 +12,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.EntityPortalEnterEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -173,6 +175,17 @@ public class PortalListener implements Listener {
 
         if (!this.tracker.canEnterPortal(event.getEntity())) {
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBlockPhysics(BlockPhysicsEvent event) {
+        if (!ConfigStore.getInstance().isPortalBlockPhysicsEnabled() && event.getBlock().getType() == Material.PORTAL) {
+            // Portal blocks normally disappear if they're not inside an obsidian frame - if physics are disabled, prevent
+            //  them from despawning unless there's nothing underneath them.
+            if (event.getBlock().getRelative(BlockFace.DOWN).getType() != Material.AIR) {
+                event.setCancelled(true);
+            }
         }
     }
 
