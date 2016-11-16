@@ -9,6 +9,8 @@ import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalMessage;
 import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalStore;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,6 +18,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
+
+import java.util.Arrays;
 
 public class SignListener implements Listener {
     //region Event Handlers
@@ -71,12 +75,29 @@ public class SignListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
-        if (!(event.getBlock().getState() instanceof Sign)) {
-            // Not a sign, don't care
+        Block block = event.getBlock();
+
+        if (block.getState() instanceof Sign) {
+            // Broken block was a sign
+            this.handleSignBreak(event, block);
             return;
         }
 
-        Location signLocation = event.getBlock().getLocation();
+        Block attachedSign = Arrays.stream(new BlockFace[] { BlockFace.UP, BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST})
+            .map(f -> block.getRelative(f))
+            .filter(b -> b.getState() instanceof Sign)
+            .findAny()
+            .orElse(null);
+
+        if (attachedSign != null) {
+            // Broken block had a sign attached
+            this.handleSignBreak(event, attachedSign);
+            return;
+        }
+    }
+
+    private void handleSignBreak(BlockBreakEvent event, Block block) {
+        Location signLocation = block.getLocation();
         Portal portal = PortalStore.getInstance().getPortalByLocation(signLocation);
         if (portal == null) {
             // Not a portal sign, don't care
@@ -84,8 +105,11 @@ public class SignListener implements Listener {
         }
 
         Player player = event.getPlayer();
-        if (!player.hasPermission(Constants.ModifyOwnPortalPermission)) {
+        if (portal.getOwner() != null &&
+            portal.getOwner() == player.getUniqueId() &&
+            !player.hasPermission(Constants.ModifyOwnPortalPermission)) {
             player.sendMessage(ChatColor.RED + "You do not have permission to remove portals!");
+            event.setCancelled(true);
             return;
         }
 
@@ -93,6 +117,7 @@ public class SignListener implements Listener {
             portal.getOwner() != player.getUniqueId() &&
             !player.hasPermission(Constants.ModifyOtherPortalPermission)) {
             player.sendMessage(ChatColor.RED + "You do not have permission to remove portals owned by another player!");
+            event.setCancelled(true);
             return;
         }
 

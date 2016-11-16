@@ -63,6 +63,12 @@ class PortalUsageTracker {
             return;
         }
 
+        if (entity.getLocation().getWorld() != record.lastPortalContact.getWorld()) {
+            // Entity is in another world, that's probably far enough
+            record.lastPortalContact = null;
+            return;
+        }
+
         if (entity.getLocation().distance(record.lastPortalContact) > 2) {
             // Entity has moved a sufficient distance from the last teleport location, so clear it
             record.lastPortalContact = null;
