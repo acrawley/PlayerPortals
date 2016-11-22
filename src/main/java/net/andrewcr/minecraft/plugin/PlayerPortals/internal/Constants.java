@@ -1,4 +1,4 @@
-package net.andrewcr.minecraft.plugin.PlayerPortals;
+package net.andrewcr.minecraft.plugin.PlayerPortals.internal;
 
 public final class Constants {
     public static final String PermissionRoot = "playerportal";

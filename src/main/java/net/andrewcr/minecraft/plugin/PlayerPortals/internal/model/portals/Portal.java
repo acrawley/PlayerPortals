@@ -1,23 +1,27 @@
-package net.andrewcr.minecraft.plugin.PlayerPortals.model.portals;
+package net.andrewcr.minecraft.plugin.PlayerPortals.internal.model.portals;
 
 import lombok.Getter;
 import lombok.Synchronized;
 import net.andrewcr.minecraft.plugin.BasePluginLib.util.LocationUtil;
 import net.andrewcr.minecraft.plugin.BasePluginLib.util.StringUtil;
+import net.andrewcr.minecraft.plugin.PlayerPortals.api.types.IPortal;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.ConfigurationSection;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
-public class Portal {
+public class Portal implements IPortal {
     private static final String SIGN_POSITION_KEY = "SignPosition";
     private static final String SIGN_ANGLE_KEY = "SignAngle";
     private static final String OWNER_KEY = "Owner";
     private static final String DESTINATION_KEY = "Destination";
     private static final String MESSAGE_KEY = "Message";
     private static final String PORTAL_EXIT_HEADING_KEY = "PortalExitHeading";
+    private static final String CUSTOM_PROPERTIES_KEY = "CustomProperties";
 
     private final Object configLock = PortalStore.getInstance().getSyncObj();
 
@@ -28,6 +32,7 @@ public class Portal {
     @Getter private UUID owner;
     @Getter private String message;
     @Getter private PortalExitHeading exitHeading;
+    private Map<String, String> customProperties;
 
     public Portal(Location location, float signAngle, UUID owner, String name, String destination, String message) {
         this.location = location;
@@ -36,12 +41,14 @@ public class Portal {
         this.name = name;
         this.destination = destination;
         this.message = message;
+
+        this.customProperties = new HashMap<>();
     }
 
     //region Serialization
 
     public static Portal loadFrom(ConfigurationSection portalSection) {
-        String name =  portalSection.getName();
+        String name = portalSection.getName();
         Location signPosition;
 
         float signAngle = 0;
@@ -78,33 +85,47 @@ public class Portal {
             portal.setExitHeading(PortalExitHeading.fromString(portalSection.getString(PORTAL_EXIT_HEADING_KEY)));
         }
 
+        if (portalSection.contains(CUSTOM_PROPERTIES_KEY)) {
+            ConfigurationSection propertiesSection = portalSection.getConfigurationSection(CUSTOM_PROPERTIES_KEY);
+            for (String property : propertiesSection.getKeys(false)) {
+                portal.setProperty(property, propertiesSection.getString(property));
+            }
+        }
+
         return portal;
     }
 
     @Synchronized("configLock")
-    public void save(ConfigurationSection portals) {
-        ConfigurationSection portal = portals.createSection(this.name);
+    public void save(ConfigurationSection portalsSection) {
+        ConfigurationSection portalSection = portalsSection.createSection(this.name);
 
-        portal.set(SIGN_POSITION_KEY, LocationUtil.locationToIntString(location, true, false, false));
+        portalSection.set(SIGN_POSITION_KEY, LocationUtil.locationToIntString(location, true, false, false));
 
         if (this.signAngle != 0) {
-            portal.set(SIGN_ANGLE_KEY, this.signAngle);
+            portalSection.set(SIGN_ANGLE_KEY, this.signAngle);
         }
 
         if (!StringUtil.isNullOrEmpty(this.destination)) {
-            portal.set(DESTINATION_KEY, this.destination);
+            portalSection.set(DESTINATION_KEY, this.destination);
         }
 
         if (!StringUtil.isNullOrEmpty(this.message)) {
-            portal.set(MESSAGE_KEY, this.message);
+            portalSection.set(MESSAGE_KEY, this.message);
         }
 
         if (this.owner != null) {
-            portal.set(OWNER_KEY, this.owner.toString());
+            portalSection.set(OWNER_KEY, this.owner.toString());
         }
 
         if (this.exitHeading != null) {
-            portal.set(PORTAL_EXIT_HEADING_KEY, this.exitHeading.toString());
+            portalSection.set(PORTAL_EXIT_HEADING_KEY, this.exitHeading.toString());
+        }
+
+        if (this.customProperties.size() != 0) {
+            ConfigurationSection propertiesSection = portalSection.createSection(CUSTOM_PROPERTIES_KEY);
+            for (String property : this.customProperties.keySet()) {
+                propertiesSection.set(property, this.customProperties.get(property));
+            }
         }
     }
 
@@ -174,6 +195,27 @@ public class Portal {
     @Synchronized("configLock")
     public void setMessage(String message) {
         this.message = message;
+        PortalStore.getInstance().notifyChanged();
+    }
+
+    public String getProperty(String property) {
+        if (this.customProperties.containsKey(property)) {
+            return this.customProperties.get(property);
+        }
+
+        return null;
+    }
+
+    @Synchronized("configLock")
+    public void setProperty(String property, String value) {
+        if (value == null) {
+            if (this.customProperties.containsKey(property)) {
+                this.customProperties.remove(property);
+            }
+        } else {
+            this.customProperties.put(property, value);
+        }
+
         PortalStore.getInstance().notifyChanged();
     }
 }

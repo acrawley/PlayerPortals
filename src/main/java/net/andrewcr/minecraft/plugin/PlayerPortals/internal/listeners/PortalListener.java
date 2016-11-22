@@ -1,13 +1,13 @@
-package net.andrewcr.minecraft.plugin.PlayerPortals.listeners;
+package net.andrewcr.minecraft.plugin.PlayerPortals.internal.listeners;
 
 import net.andrewcr.minecraft.plugin.BasePluginLib.util.StringUtil;
-import net.andrewcr.minecraft.plugin.PlayerPortals.Plugin;
+import net.andrewcr.minecraft.plugin.PlayerPortals.internal.Plugin;
 import net.andrewcr.minecraft.plugin.PlayerPortals.api.events.PlayerPortalsEntityPortalEvent;
 import net.andrewcr.minecraft.plugin.PlayerPortals.api.events.PlayerPortalsEntityPortalExitEvent;
 import net.andrewcr.minecraft.plugin.PlayerPortals.api.events.PlayerPortalsPlayerPortalEvent;
-import net.andrewcr.minecraft.plugin.PlayerPortals.model.config.ConfigStore;
-import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.Portal;
-import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalStore;
+import net.andrewcr.minecraft.plugin.PlayerPortals.internal.model.config.ConfigStore;
+import net.andrewcr.minecraft.plugin.PlayerPortals.internal.model.portals.Portal;
+import net.andrewcr.minecraft.plugin.PlayerPortals.internal.model.portals.PortalStore;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;

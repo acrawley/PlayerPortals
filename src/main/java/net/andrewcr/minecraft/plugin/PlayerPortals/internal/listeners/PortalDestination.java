@@ -1,11 +1,11 @@
-package net.andrewcr.minecraft.plugin.PlayerPortals.listeners;
+package net.andrewcr.minecraft.plugin.PlayerPortals.internal.listeners;
 
 import lombok.Data;
 import net.andrewcr.minecraft.plugin.BasePluginLib.util.LocationUtil;
 import net.andrewcr.minecraft.plugin.BasePluginLib.util.StringUtil;
-import net.andrewcr.minecraft.plugin.PlayerPortals.integration.distributedspawns.DistributedSpawnsIntegration;
-import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.Portal;
-import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalStore;
+import net.andrewcr.minecraft.plugin.PlayerPortals.internal.integration.distributedspawns.DistributedSpawnsIntegration;
+import net.andrewcr.minecraft.plugin.PlayerPortals.internal.model.portals.Portal;
+import net.andrewcr.minecraft.plugin.PlayerPortals.internal.model.portals.PortalStore;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;

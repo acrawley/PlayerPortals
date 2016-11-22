@@ -1,6 +1,6 @@
 name: PlayerPortals
-main: net.andrewcr.minecraft.plugin.PlayerPortals.Plugin
-version: 1.0
+main: net.andrewcr.minecraft.plugin.PlayerPortals.internal.Plugin
+version: 1.1
 authors: [ andrewcr ]
 depend: [ BasePluginLib ]
 softdepend: [ Multiverse-Core, dynmap, DistributedSpawns ]

@@ -1,8 +1,8 @@
-package net.andrewcr.minecraft.plugin.PlayerPortals.integration.distributedspawns;
+package net.andrewcr.minecraft.plugin.PlayerPortals.internal.integration.distributedspawns;
 
 import net.andrewcr.minecraft.plugin.DistributedSpawns.api.IDistributedSpawnsApi;
-import net.andrewcr.minecraft.plugin.PlayerPortals.Plugin;
-import net.andrewcr.minecraft.plugin.PlayerPortals.model.config.ConfigStore;
+import net.andrewcr.minecraft.plugin.PlayerPortals.internal.Plugin;
+import net.andrewcr.minecraft.plugin.PlayerPortals.internal.model.config.ConfigStore;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;

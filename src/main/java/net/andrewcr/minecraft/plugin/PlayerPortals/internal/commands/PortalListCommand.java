@@ -1,11 +1,11 @@
-package net.andrewcr.minecraft.plugin.PlayerPortals.commands;
+package net.andrewcr.minecraft.plugin.PlayerPortals.internal.commands;
 
 import net.andrewcr.minecraft.plugin.BasePluginLib.command.CommandBase;
 import net.andrewcr.minecraft.plugin.BasePluginLib.command.CommandExecutorBase;
 import net.andrewcr.minecraft.plugin.BasePluginLib.util.StringUtil;
-import net.andrewcr.minecraft.plugin.PlayerPortals.Constants;
-import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.Portal;
-import net.andrewcr.minecraft.plugin.PlayerPortals.model.portals.PortalStore;
+import net.andrewcr.minecraft.plugin.PlayerPortals.internal.Constants;
+import net.andrewcr.minecraft.plugin.PlayerPortals.internal.model.portals.Portal;
+import net.andrewcr.minecraft.plugin.PlayerPortals.internal.model.portals.PortalStore;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;

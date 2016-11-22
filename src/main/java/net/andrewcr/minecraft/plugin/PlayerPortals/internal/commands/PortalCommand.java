@@ -1,4 +1,4 @@
-package net.andrewcr.minecraft.plugin.PlayerPortals.commands;
+package net.andrewcr.minecraft.plugin.PlayerPortals.internal.commands;
 
 import net.andrewcr.minecraft.plugin.BasePluginLib.command.CommandBase;
 import net.andrewcr.minecraft.plugin.BasePluginLib.command.CommandExecutorBase;

@@ -1,8 +1,8 @@
-package net.andrewcr.minecraft.plugin.PlayerPortals.model.config;
+package net.andrewcr.minecraft.plugin.PlayerPortals.internal.model.config;
 
 import lombok.Getter;
 import net.andrewcr.minecraft.plugin.BasePluginLib.config.ConfigurationFileBase;
-import net.andrewcr.minecraft.plugin.PlayerPortals.Plugin;
+import net.andrewcr.minecraft.plugin.PlayerPortals.internal.Plugin;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class ConfigStore extends ConfigurationFileBase {

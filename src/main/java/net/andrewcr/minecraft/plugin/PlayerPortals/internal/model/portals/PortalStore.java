@@ -1,8 +1,8 @@
-package net.andrewcr.minecraft.plugin.PlayerPortals.model.portals;
+package net.andrewcr.minecraft.plugin.PlayerPortals.internal.model.portals;
 
 import net.andrewcr.minecraft.plugin.BasePluginLib.config.ConfigurationFileBase;
 import net.andrewcr.minecraft.plugin.BasePluginLib.util.StringUtil;
-import net.andrewcr.minecraft.plugin.PlayerPortals.Plugin;
+import net.andrewcr.minecraft.plugin.PlayerPortals.internal.Plugin;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
